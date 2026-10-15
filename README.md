@@ -1,3 +1,5 @@
+<https://marioapasama.github.io/view_hex/>
+
 # Hex & ASCII Log Viewer
 
 A lightweight, modern, and privacy-focused web application designed to inspect binary logs, serial communication streams, and raw byte files. Features visual ASCII control character badges and a synchronized 16-column Hex Dump with multi-cell range calculations.
