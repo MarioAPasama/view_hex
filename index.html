@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="doc_title">Hex &amp; ASCII Log Viewer - Control Characters Display</title>
+  <!-- CSS Terpisah - 100% Offline Tanpa CDN / Internet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header Navigasi -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">&lt;&gt;</div>
+      <div>
+        <h1>Hex &amp; ASCII Log Viewer</h1>
+        <p data-i18n="brand_subtitle">View Control Characters (STX, ETX, EOT, ACK, ENQ) &amp; Hex Dump</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <select id="lang-select" class="btn lang-select" title="Switch Language / Ganti Bahasa">
+        <option value="en">🌐 English (EN)</option>
+        <option value="id">🌐 Indonesia (ID)</option>
+      </select>
+      <button class="btn" id="btn-theme" data-i18n="btn_theme" data-i18n-title="btn_theme_title">🌓 Theme</button>
+      <button class="btn" id="btn-legend" data-i18n="btn_legend" data-i18n-title="btn_legend_title">📖 Dictionary</button>
+      <button class="btn btn-outline" id="btn-paste-modal" data-i18n="btn_paste" data-i18n-title="btn_paste_title">📋 Paste Text / Hex</button>
+    </div>
+  </header>
+
+  <!-- Kontainer Utama -->
+  <div class="container">
+    <!-- Area Tarik & Lepas File -->
+    <div class="dropzone-card" id="dropzone">
+      <input type="file" id="file-input" class="file-input">
+      <div class="dropzone-content">
+        <div class="drop-icon">📂</div>
+        <div>
+          <strong data-i18n="dropzone_title">Drag &amp; drop log file here</strong> <span data-i18n="dropzone_or">or</span> 
+          <button class="btn btn-primary" style="margin-left: 0.4rem;" onclick="document.getElementById('file-input').click()" data-i18n="btn_select_file">Select File</button>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);" data-i18n="dropzone_subtext">
+          Supports .log, .txt, .dat, .bin, .hex, or any binary files. 100% processed offline in your browser.
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar & Pilihan Tab -->
+    <div class="view-toolbar">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="badge-view" data-i18n="tab_badge">
+          🏷️ Control Badges (Text + Symbols)
+        </button>
+        <button class="tab-btn" data-tab="hex-view" data-i18n="tab_hex">
+          🔢 Hex Dump (Editor)
+        </button>
+      </div>
+
+      <div class="view-options">
+        <div class="view-checks">
+          <label class="checkbox-label" id="opt-linebreaks-wrapper">
+            <input type="checkbox" id="opt-linebreaks" checked> <span data-i18n="opt_linebreaks">Format Newlines (CR/LF)</span>
+          </label>
+          <label class="checkbox-label" id="opt-showhex-wrapper">
+            <input type="checkbox" id="opt-showhex"> <span data-i18n="opt_showhex">Show Hex Value in Badges</span>
+          </label>
+        </div>
+        <div class="view-actions-group">
+          <input type="text" class="search-input" id="search-box" placeholder="🔍 Search text..." data-i18n-placeholder="search_placeholder">
+          <div class="view-copy-buttons">
+            <button class="btn" id="btn-copy-formatted" data-i18n="btn_copy_labeled" data-i18n-title="btn_copy_labeled_title">Copy Labeled</button>
+            <button class="btn" id="btn-copy-raw" data-i18n="btn_copy_clean" data-i18n-title="btn_copy_clean_title">Copy Clean Text</button>
+            <button class="btn" id="btn-copy-hex" data-i18n="btn_copy_hex" data-i18n-title="btn_copy_hex_title">Copy Hex</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Area Tampilan Data -->
+    <div class="viewer-card">
+      <div class="viewer-header">
+        <span id="viewer-title" data-i18n="viewer_title_default">Interactive View</span>
+        <span id="viewer-meta" data-i18n="viewer_meta_empty">No file loaded yet</span>
+      </div>
+      <div class="viewer-content" id="viewer-content">
+        <!-- Keadaan Awal / Kosong -->
+        <div style="color: var(--text-muted); text-align: center; margin-top: 5rem;" id="viewer-empty-state">
+          <div style="font-size: 2.8rem; margin-bottom: 0.8rem; opacity: 0.6;">📂</div>
+          <strong style="font-size: 1.05rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem;" data-i18n="empty_title">No file loaded yet</strong>
+          <span style="font-size: 0.85rem;" data-i18n="empty_desc">Please select or drop your log file above.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Kamus Karakter Kontrol -->
+  <div class="modal-overlay" id="legend-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 data-i18n="legend_title">📖 ASCII Control Characters Dictionary</h3>
+        <button class="btn" onclick="document.getElementById('legend-modal').classList.remove('open')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary);" data-i18n="legend_intro">
+          These control characters (0x00 - 0x1F and 0x7F) are standard non-printable ASCII characters commonly used in serial communications, hardware interfaces, network protocols, and data streams:
+        </p>
+        <div class="legend-grid" id="legend-grid">
+          <!-- Item kamus digenerate secara otomatis via JavaScript sesuai bahasa aktif -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="document.getElementById('legend-modal').classList.remove('open')" data-i18n="modal_close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tempel Teks / Hex -->
+  <div class="modal-overlay" id="paste-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 data-i18n="paste_title">📋 Paste Text or Hex String</h3>
+        <button class="btn" onclick="document.getElementById('paste-modal').classList.remove('open')">✕</button>
+      </div>
+      <div class="modal-body">
+        <label style="font-size: 0.85rem; color: var(--text-secondary);">
+          <span data-i18n="paste_type_label">Select input type:</span>
+          <select id="paste-type" class="btn" style="margin-left: 0.5rem; padding: 0.3rem 0.6rem;">
+            <option value="raw" data-i18n="paste_opt_raw">Raw Text (Raw String)</option>
+            <option value="hex" data-i18n="paste_opt_hex">Hex String (e.g.: 05 02 31 48 7C ...)</option>
+          </select>
+        </label>
+        <textarea id="paste-content" class="modal-textarea" placeholder="Paste data here..." data-i18n-placeholder="paste_placeholder"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="document.getElementById('paste-modal').classList.remove('open')" data-i18n="modal_cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-paste-apply" data-i18n="modal_apply">Apply &amp; View</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifikasi Toast -->
+  <div id="toast" class="toast">Copied to clipboard!</div>
+
+  <!-- Floating Bottom Status Bar (Menggantikan Footer) -->
+  <footer class="viewer-statusbar" id="viewer-statusbar">
+    <div class="status-placeholder">
+      <span>📍 Click or drag to select cell range and view calculations.</span>
+      <span class="status-hint">💡 Tip: Hold Shift + Drag / Arrow keys to select range | Esc to clear</span>
+    </div>
+  </footer>
+
+  <!-- JavaScript Modular - 100% Offline Tanpa Bundler / Server -->
+  <script src="js/constants.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/selection.js"></script>
+  <script src="js/viewer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
