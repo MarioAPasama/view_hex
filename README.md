@@ -133,7 +133,6 @@ view_hex/
 │   ├── selection.js    # Range selection, statistics engine (Sum, Avg, Min/Max, Checksum), and status bar
 │   ├── viewer.js       # Badge & Hex rendering engines and centralized Event Delegation
 │   └── app.js          # Main coordinator: file I/O, drag-and-drop, modals, and keyboard shortcuts
-├── abbott.log          # Sample log file for testing
 └── README.md           # Project documentation
 ```
 
